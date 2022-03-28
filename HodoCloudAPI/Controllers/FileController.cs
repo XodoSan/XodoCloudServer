@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Infrastructure.Loader;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -7,10 +8,18 @@ namespace HodoCloudAPI.Controllers
     [ApiController]
     public class FileController: ControllerBase
     {
+        private readonly IFileLoader _fileLoader;
+
+        public FileController(IFileLoader fileLoader)
+        {
+            _fileLoader = fileLoader;
+        }
+
         [HttpPost, DisableRequestSizeLimit]
         public void PostUserFile()
-        {
-            var file = Request.Form.Files[0];
+        {            
+            var userFile = Request.Form.Files[0];
+            _fileLoader.SaveFileToUserFolder(userFile);
         }
     }
 }

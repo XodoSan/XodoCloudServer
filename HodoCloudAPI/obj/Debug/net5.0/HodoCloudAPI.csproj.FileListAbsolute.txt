@@ -60,3 +60,6 @@ C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Infra
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\obj\Debug\net5.0\HodoCloudAPI.csproj.CopyComplete
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Humanizer.dll
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.AspNetCore.Http.Features.dll
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.Extensions.Primitives.dll
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\System.IO.Pipelines.dll

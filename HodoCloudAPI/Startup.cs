@@ -1,4 +1,5 @@
 using Infrastructure;
+using Infrastructure.Loader;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ namespace HodoCloudAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddScoped<IFileLoader, FileLoader>();
+
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
 
