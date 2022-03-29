@@ -1546,7 +1546,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v5.0",
         "dependencies": {
-          "Domain": "1.0.0"
+          "Domain": "1.0.0",
+          "Microsoft.AspNetCore.Http.Features": "5.0.15"
         },
         "compile": {
           "bin/placeholder/Application.dll": {}

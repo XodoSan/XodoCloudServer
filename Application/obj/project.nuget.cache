@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "LxOX4cS6gC6lRh2fVpY/lPxOFyz5NltoHOvF2C62/7fjKhj64bXmyw4ufmRELTwQgwoFi2TXY+ij16wlkszmSA==",
+  "dgSpecHash": "8SEsGKjhrOSqROX3YMD1/gJ6eM1ObbwgzRvEU9BCz9SUDpMSy8eO3+YBz51a0Ex7iOjKnhQLPiTe2tyPPqZ7gA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Андрей\\source\\repos\\HodoCloud\\Application\\Application.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Андрей\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.15\\microsoft.aspnetcore.http.features.5.0.15.nupkg.sha512",
+    "C:\\Users\\Андрей\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.1\\microsoft.extensions.primitives.5.0.1.nupkg.sha512",
+    "C:\\Users\\Андрей\\.nuget\\packages\\system.io.pipelines\\5.0.2\\system.io.pipelines.5.0.2.nupkg.sha512"
+  ],
   "logs": []
 }
