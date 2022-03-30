@@ -1,6 +1,10 @@
+using Application;
+using Application.Services.ConvertService;
 using Application.Services.FileService;
+using Domain.Repositories;
 using Infrastructure;
 using Infrastructure.Loader;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +28,9 @@ namespace HodoCloudAPI
             services.AddControllers();
             services.AddScoped<IFileLoader, FileLoader>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IConvertService, ConvertService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
