@@ -5,11 +5,11 @@ namespace Infrastructure.Loader
 {
     public class FileLoader: IFileLoader
     {
-        private string basePath = @"C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Users\";
-
-        public void SaveFileToUserFolder(IFormFile userFile)
+        private static string basePath = Directory.GetCurrentDirectory() + @"\";
+        
+        public void SaveFileToUserFolder(IFormFile userFile)//User email need be into arguments and paste after Users
         {
-            using (Stream fileStream = new FileStream(basePath + userFile.FileName, FileMode.Create))
+            using (Stream fileStream = new FileStream(basePath + "Users" + @"\" + userFile.FileName, FileMode.Create))
             {
                 userFile.CopyToAsync(fileStream);
                 fileStream.Close();
