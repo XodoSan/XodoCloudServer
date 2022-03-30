@@ -1,6 +1,7 @@
 using Application;
 using Application.Services.ConvertService;
 using Application.Services.FileService;
+using Application.Services.HashService;
 using Domain.Repositories;
 using Infrastructure;
 using Infrastructure.Loader;
@@ -31,6 +32,7 @@ namespace HodoCloudAPI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IConvertService, ConvertService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IHashService, HashService>();
             
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
