@@ -1,4 +1,5 @@
 using Application;
+using Application.Services.AuthServices.RegistrationService;
 using Application.Services.ConvertService;
 using Application.Services.FileService;
 using Application.Services.HashService;
@@ -33,6 +34,7 @@ namespace HodoCloudAPI
             services.AddScoped<IConvertService, ConvertService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IHashService, HashService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
             
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");

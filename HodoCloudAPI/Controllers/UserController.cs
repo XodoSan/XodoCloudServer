@@ -28,11 +28,18 @@ namespace HodoCloudAPI.Controllers
         }
 
         [HttpPost("Registration")]
-        public void AddUser([FromBody] UserDto userDto)
+        public void RegisterUser([FromBody] UserDto userDto)
         {
             User user = _convertService.ConvertToUser(userDto);
             _userRepository.AddUser(user);
             _unitOfWork.Commit();
+        }
+
+        [HttpPost("Login")]
+        public User LoginUser([FromBody] UserDto userDto)
+        {
+            User user = _convertService.ConvertToUser(userDto);
+            return user;
         }
 
         [HttpGet]
