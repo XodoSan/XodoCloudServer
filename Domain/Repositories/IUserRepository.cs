@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Domain.Repositories
 {
@@ -7,5 +8,6 @@ namespace Domain.Repositories
     {
         public void AddUser(User user);
         public List<User> GetAllUsers();
+        public Task<User> GetByEmail(string email);
     }
 }

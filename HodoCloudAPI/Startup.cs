@@ -1,12 +1,11 @@
 using Application;
-using Application.Services.AuthServices.RegistrationService;
-using Application.Services.ConvertService;
 using Application.Services.FileService;
-using Application.Services.HashService;
+using Application.Services.UserService;
 using Domain.Repositories;
 using Infrastructure;
 using Infrastructure.Loader;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -31,21 +30,29 @@ namespace HodoCloudAPI
             services.AddScoped<IFileLoader, FileLoader>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IConvertService, ConvertService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IHashService, HashService>();
-            services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IUserService, UserService>();
             
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
 
             services.AddDbContext<AppDBContext>(options => options.UseSqlServer(connectionString,
                 b => b.MigrationsAssembly("Infrastructure")));
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
 

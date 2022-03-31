@@ -1,4 +1,4 @@
-﻿namespace Application.DtoEntities
+﻿namespace HodoCloudAPI.Dtos
 {
     public class UserDto
     {

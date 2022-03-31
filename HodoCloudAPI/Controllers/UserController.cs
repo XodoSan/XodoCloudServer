@@ -1,10 +1,13 @@
 ﻿using Application;
-using Application.DtoEntities;
-using Application.Services.ConvertService;
+using Application.Entities;
+using Application.Services.UserService;
 using Domain.Entities;
 using Domain.Repositories;
+using HodoCloudAPI.Converters;
+using HodoCloudAPI.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -13,39 +16,51 @@ namespace HodoCloudAPI.Controllers
     public class UserController: ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly IConvertService _convertService;
+        private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
 
         public UserController
         (
             IUserRepository userRepository, 
-            IConvertService convertService,
+            IUserService userService,
             IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
-            _convertService = convertService;
+            _userService = userService;
             _unitOfWork = unitOfWork;
         }
 
-        [HttpPost("Registration")]
+        [HttpPost("registration")]
         public void RegisterUser([FromBody] UserDto userDto)
         {
-            User user = _convertService.ConvertToUser(userDto);
+            User user = UserConverter.ConvertToUser(userDto);
             _userRepository.AddUser(user);
             _unitOfWork.Commit();
         }
 
-        [HttpPost("Login")]
-        public User LoginUser([FromBody] UserDto userDto)
+        [HttpPost("login")]
+        public async Task<UserAuthenticationResultDto> Login([FromBody] AuthenticateUserCommandDto authenticateUserDto)
         {
-            User user = _convertService.ConvertToUser(userDto);
-            return user;
+            AuthenticateUserCommand authenticateUserCommand = ConvertToAuthenticateUserCommand(authenticateUserDto);
+            UserAuthenticationResult result = await _userService.Login(authenticateUserCommand);
+
+            return new UserAuthenticationResultDto( result.Result, result.Error);
         }
 
         [HttpGet]
         public List<User> GetAllUsers()
         {
             return _userRepository.GetAllUsers();
+        }
+
+        private AuthenticateUserCommand ConvertToAuthenticateUserCommand(AuthenticateUserCommandDto authenticateUserCommandDto)
+        {
+            return new AuthenticateUserCommand
+            (
+                authenticateUserCommandDto.Email,
+                authenticateUserCommandDto.Password,
+                HttpContext
+            );
         }
     }
 }
