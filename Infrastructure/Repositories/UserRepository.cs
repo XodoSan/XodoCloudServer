@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Services;
+using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Infrastructure.Repositories
 
         public void AddUser(User user)
         {
+            user.PasswordHash = HashService.GetHash(user.PasswordHash);
             _context.Set<User>().Add(user);
         }
 
