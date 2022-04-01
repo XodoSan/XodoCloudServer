@@ -4,6 +4,6 @@ namespace Infrastructure.Loader
 {
     public interface IFileLoader
     {
-        public void SaveFileToUserFolder(IFormFile userFile);
+        public void SaveFileToUserFolder(IFormFile userFile, string authenticateUserEmail);
     }
 }

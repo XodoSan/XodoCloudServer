@@ -1,7 +1,5 @@
-﻿using Application.Entities;
-using Domain.Entities;
+﻿using Domain.Entities;
 using HodoCloudAPI.Dtos;
-using Microsoft.AspNetCore.Http;
 
 namespace HodoCloudAPI.Converters
 {

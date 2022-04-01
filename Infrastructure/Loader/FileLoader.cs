@@ -5,11 +5,15 @@ namespace Infrastructure.Loader
 {
     public class FileLoader: IFileLoader
     {
-        private static string basePath = Directory.GetCurrentDirectory() + @"\";
+        private static string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
         
-        public void SaveFileToUserFolder(IFormFile userFile)//User email need be into arguments and paste after Users
+        public void SaveFileToUserFolder(IFormFile userFile, string authenticateUserEmail)
         {
-            using (Stream fileStream = new FileStream(basePath + "Users" + @"\" + userFile.FileName, FileMode.Create))
+            using 
+            (
+                Stream fileStream = new FileStream(
+                basePath + authenticateUserEmail + @"\" + userFile.FileName, FileMode.Create)
+            )
             {
                 userFile.CopyToAsync(fileStream);
                 fileStream.Close();

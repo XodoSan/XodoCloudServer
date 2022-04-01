@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Services.FileService;
 using Microsoft.AspNetCore.Authorization;
+using Application.Services.UserService;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -23,11 +24,11 @@ namespace HodoCloudAPI.Controllers
         [Authorize]
         [DisableRequestSizeLimit]
         public void PostUserFile()
-        {            
+        {
             var userFile = Request.Form.Files[0];
             if (_fileService.ValidateFile(userFile))
             {
-                _fileLoader.SaveFileToUserFolder(userFile);
+                _fileLoader.SaveFileToUserFolder(userFile, UserService.authEmail);
             }
         }
     }

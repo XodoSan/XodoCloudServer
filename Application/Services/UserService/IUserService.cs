@@ -6,5 +6,6 @@ namespace Application.Services.UserService
     public interface IUserService
     {
         public Task<UserAuthenticationResult> Login(AuthenticateUserCommand authenticateUserCommand);
+        public Task<UserAuthenticationResult> Register(AuthenticateUserCommand authenticateUserCommand);
     }
 }

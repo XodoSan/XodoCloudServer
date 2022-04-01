@@ -1,4 +1,5 @@
 ﻿using Application.Entities;
+using Application.Services.FileService;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Authentication;
@@ -12,11 +13,15 @@ namespace Application.Services.UserService
 {
     public class UserService: IUserService
     {
-        private readonly IUserRepository _userRepository;
+        public static string authEmail;
 
-        public UserService(IUserRepository userRepository)
+        private readonly IUserRepository _userRepository;
+        private readonly IFileService _fileService;
+
+        public UserService(IUserRepository userRepository, IFileService fileService)
         {
             _userRepository = userRepository;
+            _fileService = fileService;
         }
 
         public async Task<UserAuthenticationResult> Login(AuthenticateUserCommand authenticateUserCommand)
@@ -34,7 +39,30 @@ namespace Application.Services.UserService
             }
 
             await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
-            
+            authEmail = authenticateUserCommand.Email;
+
+            return new UserAuthenticationResult(true, null);
+        }
+
+        public async Task<UserAuthenticationResult> Register(AuthenticateUserCommand authenticateUserCommand)
+        {
+            User user = await _userRepository.GetByEmail(authenticateUserCommand.Email);
+
+            if (user != null)
+            {
+                return new UserAuthenticationResult(false, "user");
+            }
+
+            User newUser = new();
+            newUser.Email = authenticateUserCommand.Email;
+            newUser.PasswordHash = authenticateUserCommand.Password;
+
+            _fileService.AddUserFolder(newUser);
+            _userRepository.AddUser(newUser);
+
+            await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
+            authEmail = authenticateUserCommand.Email;
+
             return new UserAuthenticationResult(true, null);
         }
 
