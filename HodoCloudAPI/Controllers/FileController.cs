@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Loader;
 using Microsoft.AspNetCore.Mvc;
 using Application.Services.FileService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -19,6 +20,8 @@ namespace HodoCloudAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+        [DisableRequestSizeLimit]
         public void PostUserFile()
         {            
             var userFile = Request.Form.Files[0];

@@ -5,6 +5,8 @@ using Domain.Entities;
 using Domain.Repositories;
 using HodoCloudAPI.Converters;
 using HodoCloudAPI.Dtos;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -45,6 +47,12 @@ namespace HodoCloudAPI.Controllers
             UserAuthenticationResult result = await _userService.Login(authenticateUserCommand);
 
             return new UserAuthenticationResultDto( result.Result, result.Error);
+        }
+
+        [HttpPost("logout")]
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         [HttpGet]
