@@ -8,8 +8,7 @@ namespace Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.ToTable(nameof(User)).HasKey(item => item.Id);
-            builder.Property(item => item.Id).IsRequired();
+            builder.ToTable(nameof(User)).HasKey(item => item.Email);
             builder.Property(item => item.Email).IsRequired();
             builder.Property(item => item.PasswordHash).IsRequired();
         }

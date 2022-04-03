@@ -1,4 +1,5 @@
 using Application;
+using Application.Services.CacheService;
 using Application.Services.FileService;
 using Application.Services.UserService;
 using Domain.Repositories;
@@ -32,7 +33,8 @@ namespace HodoCloudAPI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
-            
+            services.AddScoped<ICacheService, CacheService>();
+
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
 
@@ -44,6 +46,8 @@ namespace HodoCloudAPI
                 {
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
+
+            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

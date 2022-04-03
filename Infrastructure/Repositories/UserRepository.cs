@@ -28,7 +28,7 @@ namespace Infrastructure.Repositories
             return _context.Set<User>().ToList(); 
         }
 
-        public async Task<User> GetByEmail(string email)
+        public async Task<User> GetUserByEmail(string email)
         {
             return await _context.Set<User>().FirstOrDefaultAsync(user => user.Email == email);
         }

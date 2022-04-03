@@ -63,3 +63,5 @@ C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Micro
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.AspNetCore.Http.Features.dll
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.Extensions.Primitives.dll
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\System.IO.Pipelines.dll
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\System.Runtime.CompilerServices.Unsafe.dll

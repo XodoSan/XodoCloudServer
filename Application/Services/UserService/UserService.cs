@@ -26,7 +26,7 @@ namespace Application.Services.UserService
 
         public async Task<UserAuthenticationResult> Login(AuthenticateUserCommand authenticateUserCommand)
         {
-            User user = await _userRepository.GetByEmail(authenticateUserCommand.Email);
+            User user = await _userRepository.GetUserByEmail(authenticateUserCommand.Email);
 
             if (user == null)
             {
@@ -46,16 +46,15 @@ namespace Application.Services.UserService
 
         public async Task<UserAuthenticationResult> Register(AuthenticateUserCommand authenticateUserCommand)
         {
-            User user = await _userRepository.GetByEmail(authenticateUserCommand.Email);
+            User user = await _userRepository.GetUserByEmail(authenticateUserCommand.Email);
 
             if (user != null)
             {
                 return new UserAuthenticationResult(false, "user");
             }
 
-            User newUser = new();
-            newUser.Email = authenticateUserCommand.Email;
-            newUser.PasswordHash = authenticateUserCommand.Password;
+            User newUser = null;
+            newUser = new User { Email = authenticateUserCommand.Email, PasswordHash = authenticateUserCommand.Password };
 
             _fileService.AddUserFolder(newUser);
             _userRepository.AddUser(newUser);

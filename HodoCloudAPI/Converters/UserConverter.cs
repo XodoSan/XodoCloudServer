@@ -7,9 +7,8 @@ namespace HodoCloudAPI.Converters
     {
         public static User ConvertToUser(UserDto userDto)
         {
-            return new User
+            return new User()
             {
-                Id = userDto.Id,
                 Email = userDto.Email,
                 PasswordHash = userDto.Password
             };

@@ -15,5 +15,12 @@ namespace Infrastructure
         {
             _context.SaveChanges();
         }
+
+        public bool IsSuccessCommited()
+        {
+            if (_context.SaveChanges() > 0) return true;
+
+            return false;
+        }
     }
 }

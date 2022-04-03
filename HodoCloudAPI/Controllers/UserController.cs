@@ -1,6 +1,8 @@
 ﻿using Application;
 using Application.Entities;
+using Application.Services.CacheService;
 using Application.Services.UserService;
+using Domain.Entities;
 using HodoCloudAPI.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,14 +17,17 @@ namespace HodoCloudAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cacheService;
 
         public UserController
         (
             IUserService userService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICacheService cacheService)
         {
             _userService = userService;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
 
         [HttpPost("registration")]
@@ -30,7 +35,13 @@ namespace HodoCloudAPI.Controllers
         {
             AuthenticateUserCommand authenticateUserCommand = ConvertToAuthenticateUserCommand(authenticateUserDto);
             UserAuthenticationResult result = await _userService.Register(authenticateUserCommand);
+
             _unitOfWork.Commit();
+            if (_unitOfWork.IsSuccessCommited())
+            {
+                _cacheService.SetAddedUserCache(
+                    new User { Email = authenticateUserCommand.Email, PasswordHash = authenticateUserCommand.Password });
+            }
 
             return new UserAuthenticationResultDto(result.Result, result.Error);
         }
