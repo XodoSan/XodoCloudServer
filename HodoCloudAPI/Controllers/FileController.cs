@@ -4,6 +4,7 @@ using Application.Services.FileService;
 using Microsoft.AspNetCore.Authorization;
 using Application.Services.UserService;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -33,11 +34,25 @@ namespace HodoCloudAPI.Controllers
             }
         }
 
+        [HttpPost("delete")]
+        [Authorize]
+        public void DeleteUserFiles([FromBody] string[] userFiles)
+        {
+            _fileService.DeleteUserFiles(UserService.authEmail, userFiles);
+        }
+
         [HttpGet]
         [Authorize]
         public List<string> GetFileNames()
         {
             return _fileService.GetUserFileNames(UserService.authEmail);
+        }
+
+        [HttpGet("download/{userFileName}")]
+        [Authorize]
+        public async Task<FileResult> DownloadFile(string userFileName)
+        {
+            return await _fileService.DownloadUserFile(UserService.authEmail, userFileName);
         }
     }
 }
