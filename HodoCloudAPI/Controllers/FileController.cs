@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Services.FileService;
 using Microsoft.AspNetCore.Authorization;
 using Application.Services.UserService;
+using System.Collections.Generic;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -30,6 +31,13 @@ namespace HodoCloudAPI.Controllers
             {
                 _fileLoader.SaveFileToUserFolder(userFile, UserService.authEmail);
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public List<string> GetFileNames()
+        {
+            return _fileService.GetUserFileNames(UserService.authEmail);
         }
     }
 }
