@@ -13,8 +13,6 @@ namespace Application.Services.UserService
 {
     public class UserService: IUserService
     {
-        public static string authEmail;
-
         private readonly IUserRepository _userRepository;
         private readonly IFileService _fileService;
 
@@ -39,7 +37,6 @@ namespace Application.Services.UserService
             }
 
             await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
-            authEmail = authenticateUserCommand.Email;
 
             return new UserAuthenticationResult(true, null);
         }
@@ -60,7 +57,6 @@ namespace Application.Services.UserService
             _userRepository.AddUser(newUser);
 
             await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
-            authEmail = authenticateUserCommand.Email;
 
             return new UserAuthenticationResult(true, null);
         }

@@ -7,6 +7,7 @@ using HodoCloudAPI.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace HodoCloudAPI.Controllers
@@ -59,6 +60,12 @@ namespace HodoCloudAPI.Controllers
         public async Task Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+        
+        [HttpGet("is_authorized")]
+        public bool IsUserAuthorized()
+        {
+            return HttpContext.User.Identity.IsAuthenticated;
         }
 
         private AuthenticateUserCommand ConvertToAuthenticateUserCommand(AuthenticateUserCommandDto authenticateUserCommandDto)

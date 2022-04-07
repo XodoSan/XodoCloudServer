@@ -30,7 +30,7 @@ namespace HodoCloudAPI.Controllers
             var userFile = Request.Form.Files[0];
             if (_fileService.ValidateFile(userFile))
             {
-                _fileLoader.SaveFileToUserFolder(userFile, UserService.authEmail);
+                _fileLoader.SaveFileToUserFolder(userFile, HttpContext.User.Identity.Name);
             }
         }
 
@@ -38,21 +38,21 @@ namespace HodoCloudAPI.Controllers
         [Authorize]
         public void DeleteUserFiles([FromBody] string[] userFiles)
         {
-            _fileService.DeleteUserFiles(UserService.authEmail, userFiles);
+            _fileService.DeleteUserFiles(HttpContext.User.Identity.Name, userFiles);
         }
 
         [HttpGet]
         [Authorize]
         public List<string> GetFileNames()
         {
-            return _fileService.GetUserFileNames(UserService.authEmail);
+            return _fileService.GetUserFileNames(HttpContext.User.Identity.Name);
         }
 
         [HttpGet("download/{userFileName}")]
         [Authorize]
         public async Task<FileResult> DownloadFile(string userFileName)
         {
-            return await _fileService.DownloadUserFile(UserService.authEmail, userFileName);
+            return await _fileService.DownloadUserFile(HttpContext.User.Identity.Name, userFileName);
         }
     }
 }
