@@ -73,6 +73,20 @@ namespace HodoCloudAPI.Controllers
             return new UserAuthenticationResultDto(result.Result, result.Error);
         }
 
+        [HttpPost("change_password")]
+        public async Task<UserAuthenticationResultDto> ChangePassword([FromBody] UserPasswordsDto userPasswordsDto)
+        {
+            UserAuthenticationResult result = await _userService.ChangePassword(
+                HttpContext, userPasswordsDto.lastPassword, userPasswordsDto.newPassword);
+
+            if (result.Result)
+            {
+                _unitOfWork.Commit();
+            }
+            
+            return new UserAuthenticationResultDto(result.Result, result.Error);
+        }
+
         [HttpPost("logout")]
         public async Task Logout()
         {
@@ -80,9 +94,9 @@ namespace HodoCloudAPI.Controllers
         }
         
         [HttpGet("is_authorized")]
-        public bool IsUserAuthorized()
+        public string IsUserAuthorized()
         {
-            return HttpContext.User.Identity.IsAuthenticated;
+            return HttpContext.User.Identity.Name;
         }
 
         private AuthenticateUserCommand ConvertToAuthenticateUserCommand(AuthenticateUserCommandDto authenticateUserCommandDto)

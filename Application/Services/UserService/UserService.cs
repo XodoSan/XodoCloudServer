@@ -61,6 +61,21 @@ namespace Application.Services.UserService
             await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
         }
 
+        public async Task<UserAuthenticationResult> ChangePassword(HttpContext httpContext, string lastPassword, string newPassword)
+        {
+            string userEmail = httpContext.User.Identity.Name;
+            User thisUser = await _userRepository.GetUserByEmail(userEmail);
+
+            if (thisUser.PasswordHash != HashService.GetHash(lastPassword))
+            {
+                return new UserAuthenticationResult(false, "password");
+            }
+
+            thisUser.UpdatePassword(HashService.GetHash(newPassword));
+
+            return new UserAuthenticationResult(true, null);
+        }
+
         private static async Task Authenticate(string email, HttpContext httpContext)
         {
             var claims = new List<Claim> { new Claim(ClaimsIdentity.DefaultNameClaimType, email) };
