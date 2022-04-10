@@ -19,12 +19,12 @@ namespace HodoCloudAPI
 {
     public class Startup
     {
+        public IConfiguration Config { get; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Config = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -38,6 +38,8 @@ namespace HodoCloudAPI
 
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
+            Configuration.emailSender = config.GetConnectionString("EmailSender");
+            Configuration.userPassword = config.GetConnectionString("EmailPassword");
 
             services.AddDbContext<AppDBContext>(options => options.UseSqlServer(connectionString,
                 b => b.MigrationsAssembly("Infrastructure")));

@@ -1,13 +1,13 @@
 ﻿using Application;
 using Application.Entities;
-using Application.Services.CacheService;
+using Application.Services;
+using Application.Services.EmailSenderService;
 using Application.Services.UserService;
 using Domain.Entities;
 using HodoCloudAPI.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace HodoCloudAPI.Controllers
@@ -18,33 +18,47 @@ namespace HodoCloudAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICacheService _cacheService;
 
         public UserController
         (
             IUserService userService,
-            IUnitOfWork unitOfWork,
-            ICacheService cacheService)
+            IUnitOfWork unitOfWork)
         {
             _userService = userService;
             _unitOfWork = unitOfWork;
-            _cacheService = cacheService;
         }
 
         [HttpPost("registration")]
         public async Task<UserAuthenticationResultDto> RegisterUser([FromBody] AuthenticateUserCommandDto authenticateUserDto)
         {
-            AuthenticateUserCommand authenticateUserCommand = ConvertToAuthenticateUserCommand(authenticateUserDto);
-            UserAuthenticationResult result = await _userService.Register(authenticateUserCommand);
-
-            _unitOfWork.Commit();
-            if (_unitOfWork.IsSuccessCommited())
+            UserAuthenticationResult result = await _userService.Register(new User 
             {
-                _cacheService.SetAddedUserCache(
-                    new User { Email = authenticateUserCommand.Email, PasswordHash = authenticateUserCommand.Password });
-            }
+                Email = authenticateUserDto.Email, 
+                PasswordHash = authenticateUserDto.Password 
+            });
+
+            await EmailSender.SendEmailAsync(authenticateUserDto.Email);
 
             return new UserAuthenticationResultDto(result.Result, result.Error);
+        }
+
+        [HttpGet("confirm_registration/{userEmail}/{hashEmail}")]
+        public string ConfirmedRegistration([FromRoute] string userEmail, [FromRoute] string hashEmail)
+        {
+            if (HashService.GetHash(userEmail) == hashEmail)
+            {
+                AuthenticateUserCommand authenticateUserCommand = ConvertToAuthenticateUserCommand
+                    (new AuthenticateUserCommandDto 
+                    { 
+                        Email = userEmail, 
+                        Password = "" 
+                    });
+
+                _userService.FinishRegistration(authenticateUserCommand);
+                //_unitOfWork.Commit();
+            }
+
+            return "";
         }
 
         [HttpPost("login")]

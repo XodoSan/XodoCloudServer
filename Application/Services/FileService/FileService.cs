@@ -24,9 +24,9 @@ namespace Application.Services.FileService
             return false;
         }
 
-        public void AddUserFolder(User user)
+        public void AddUserFolder(string userEmail)
         {
-            Directory.CreateDirectory(basePath + user.Email);
+            Directory.CreateDirectory(basePath + userEmail);
         }
 
         public List<string> GetUserFileNames(string userEmail)

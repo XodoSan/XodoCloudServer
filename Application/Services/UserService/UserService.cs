@@ -41,24 +41,24 @@ namespace Application.Services.UserService
             return new UserAuthenticationResult(true, null);
         }
 
-        public async Task<UserAuthenticationResult> Register(AuthenticateUserCommand authenticateUserCommand)
+        public async Task<UserAuthenticationResult> Register(User user)
         {
-            User user = await _userRepository.GetUserByEmail(authenticateUserCommand.Email);
+            User checkUser = await _userRepository.GetUserByEmail(user.Email);
 
-            if (user != null)
+            if (checkUser != null)
             {
                 return new UserAuthenticationResult(false, "user");
             }
 
-            User newUser = null;
-            newUser = new User { Email = authenticateUserCommand.Email, PasswordHash = authenticateUserCommand.Password };
-
-            _fileService.AddUserFolder(newUser);
-            _userRepository.AddUser(newUser);
-
-            await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
+            _userRepository.AddUser(user);
 
             return new UserAuthenticationResult(true, null);
+        }
+
+        public async void FinishRegistration(AuthenticateUserCommand authenticateUserCommand)
+        {
+            _fileService.AddUserFolder(authenticateUserCommand.Email);
+            await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
         }
 
         private static async Task Authenticate(string email, HttpContext httpContext)
