@@ -4,5 +4,6 @@
     {
         public static string emailSender;
         public static string userPassword;
+        public static string randomWord;
     }
 }

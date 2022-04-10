@@ -45,6 +45,9 @@ namespace HodoCloudAPI.Controllers
         [HttpGet("confirm_registration/{userEmail}/{hashEmail}")]
         public string ConfirmedRegistration([FromRoute] string userEmail, [FromRoute] string hashEmail)
         {
+            int substringIndex = hashEmail.IndexOf(Configuration.randomWord);
+            hashEmail = hashEmail.Remove(substringIndex, Configuration.randomWord.Length);
+
             if (HashService.GetHash(userEmail) == hashEmail)
             {
                 AuthenticateUserCommand authenticateUserCommand = ConvertToAuthenticateUserCommand

@@ -1,11 +1,14 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using System.Net.Mail;
+using System;
 
 namespace Application.Services.EmailSenderService
 {
     public class EmailSender
     {
+        private static char[] letters = "qwertyuiopasdfghjklzxcvbnm".ToCharArray();
+
         public static async Task SendEmailAsync(string userEmail)
         {
             string confirmLink = GenereteConfirmLink(userEmail);
@@ -21,12 +24,30 @@ namespace Application.Services.EmailSenderService
             await smtp.SendMailAsync(m);
         }
 
-        public static string GenereteConfirmLink(string userEmail)
+        private static string GenereteConfirmLink(string userData)
         {
-            string baseLink = "https://localhost:5001/api/User/confirm_registration/" + userEmail + "/";
-            string emailHash = HashService.GetHash(userEmail);
+            string baseLink = "https://localhost:5001/api/User/confirm_registration/" + userData + "/";
+            string dataHash = HashService.GetHash(userData);
 
-            return baseLink + emailHash;
+            string randomWord = GetRandomWord();
+            Configuration.randomWord = randomWord;
+
+            return baseLink + dataHash + randomWord;
+        }
+
+        private static string GetRandomWord()
+        {
+            Random random = new();
+            int numLetters = random.Next(5, 10);
+            string randWord = "";
+
+            for (int i = 0; i < numLetters; i++)
+            {
+                int randomIndex = random.Next(0, letters.Length - 1);
+                randWord += letters[randomIndex];
+            }
+
+            return randWord;
         }
     }
 }
