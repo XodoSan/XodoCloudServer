@@ -5,14 +5,12 @@ using System;
 
 namespace Application.Services.EmailSenderService
 {
-    public class EmailSender
+    public class EmailSender: IEmailSender
     {
         private static char[] letters = "qwertyuiopasdfghjklzxcvbnm".ToCharArray();
 
-        public static async Task SendEmailAsync(string userEmail)
+        public async Task SendEmailAsync(string userEmail, string confirmLink)
         {
-            string confirmLink = GenereteConfirmLink(userEmail);
-
             MailAddress from = new MailAddress(Configuration.emailSender, "HodoCloud");
             MailAddress to = new MailAddress(userEmail);
             MailMessage m = new MailMessage(from, to);
@@ -24,15 +22,25 @@ namespace Application.Services.EmailSenderService
             await smtp.SendMailAsync(m);
         }
 
-        private static string GenereteConfirmLink(string userData)
+        public string GenereteEmailConfirmLink(string userEmail)
         {
-            string baseLink = "https://localhost:5001/api/User/confirm_registration/" + userData + "/";
-            string dataHash = HashService.GetHash(userData);
+            string baseLink = "https://localhost:5001/api/User/confirm_registration/";
+            string dataHash = HashService.GetHash(userEmail);
 
             string randomWord = GetRandomWord();
             Configuration.randomWord = randomWord;
 
             return baseLink + dataHash + randomWord;
+        }
+
+        public string GeneratePasswordConfirmLink(string userEmailHash, string passwordHash)
+        {
+            string baseLink = "https://localhost:5001/api/User/confirm_change_password/" + userEmailHash + "/" + passwordHash;
+
+            string randomWord = GetRandomWord();
+            Configuration.randomWord = randomWord;
+
+            return baseLink + randomWord;
         }
 
         private static string GetRandomWord()

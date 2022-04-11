@@ -17,51 +17,61 @@ namespace HodoCloudAPI.Controllers
     public class UserController: ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IEmailSender _emailSender;
         private readonly IUnitOfWork _unitOfWork;
 
         public UserController
         (
             IUserService userService,
+            IEmailSender emailSender,
             IUnitOfWork unitOfWork)
         {
             _userService = userService;
+            _emailSender = emailSender;
             _unitOfWork = unitOfWork;
         }
 
         [HttpPost("registration")]
-        public async Task<UserAuthenticationResultDto> RegisterUser([FromBody] AuthenticateUserCommandDto authenticateUserDto)
+        public async Task<UserAuthenticationResultDto> CheckToRegistration([FromBody] AuthenticateUserCommandDto authenticateUserDto)
         {
-            UserAuthenticationResult result = await _userService.Register(new User 
+            UserAuthenticationResult result = await _userService.CheckToRegistration(new User 
             {
                 Email = authenticateUserDto.Email, 
                 PasswordHash = authenticateUserDto.Password 
             });
 
-            await EmailSender.SendEmailAsync(authenticateUserDto.Email);
+            Configuration.user = new User { Email = authenticateUserDto.Email, PasswordHash = authenticateUserDto.Password };
+            string confirmLink = _emailSender.GenereteEmailConfirmLink(authenticateUserDto.Email);
+            await _emailSender.SendEmailAsync(authenticateUserDto.Email, confirmLink);
 
             return new UserAuthenticationResultDto(result.Result, result.Error);
         }
 
-        [HttpGet("confirm_registration/{userEmail}/{hashEmail}")]
-        public string ConfirmedRegistration([FromRoute] string userEmail, [FromRoute] string hashEmail)
+        [HttpGet("confirm_registration/{hashEmail}")]
+        public bool ConfirmRegistration([FromRoute] string hashEmail)
         {
             int substringIndex = hashEmail.IndexOf(Configuration.randomWord);
             hashEmail = hashEmail.Remove(substringIndex, Configuration.randomWord.Length);
 
-            if (HashService.GetHash(userEmail) == hashEmail)
+            string thisUserEmail = Configuration.user.Email; 
+            if (HashService.GetHash(thisUserEmail) == hashEmail)
             {
+                User user = Configuration.user;
+
                 AuthenticateUserCommand authenticateUserCommand = ConvertToAuthenticateUserCommand
                     (new AuthenticateUserCommandDto 
                     { 
-                        Email = userEmail, 
-                        Password = "" 
+                        Email = user.Email, 
+                        Password = user.PasswordHash 
                     });
 
                 _userService.FinishRegistration(authenticateUserCommand);
-                //_unitOfWork.Commit();
+                _unitOfWork.Commit();
+
+                return true;
             }
 
-            return "";
+            return false;
         }
 
         [HttpPost("login")]
@@ -74,17 +84,36 @@ namespace HodoCloudAPI.Controllers
         }
 
         [HttpPost("change_password")]
-        public async Task<UserAuthenticationResultDto> ChangePassword([FromBody] UserPasswordsDto userPasswordsDto)
+        public async Task<UserAuthenticationResultDto> CheckingToChangePassword([FromBody] UserPasswordsDto userPasswordsDto)
         {
-            UserAuthenticationResult result = await _userService.ChangePassword(
+            UserAuthenticationResult result = await _userService.CheckToChangePassword(
                 HttpContext, userPasswordsDto.lastPassword, userPasswordsDto.newPassword);
 
-            if (result.Result)
+            string userEmailHash = HashService.GetHash(HttpContext.User.Identity.Name);
+            string newPasswordHash = HashService.GetHash(userPasswordsDto.newPassword);
+
+            string confirmLink = _emailSender.GeneratePasswordConfirmLink(userEmailHash, newPasswordHash);
+            await _emailSender.SendEmailAsync(HttpContext.User.Identity.Name, confirmLink);
+
+            return new UserAuthenticationResultDto(result.Result, result.Error);
+        }
+
+        [HttpGet("confirm_change_password/{emailHash}/{newPasswordHash}")]
+        public async Task<bool> ConfirmChangePassword([FromRoute] string emailHash, [FromRoute] string newPasswordHash)
+        {
+            int substringIndex = newPasswordHash.IndexOf(Configuration.randomWord);
+            newPasswordHash = newPasswordHash.Remove(substringIndex, Configuration.randomWord.Length);
+
+            string thisUserEmail = HttpContext.User.Identity.Name;
+
+            if (await _userService.isPasswordHasChanged(thisUserEmail, emailHash, newPasswordHash))
             {
                 _unitOfWork.Commit();
+
+                return true;
             }
-            
-            return new UserAuthenticationResultDto(result.Result, result.Error);
+
+            return false;
         }
 
         [HttpPost("logout")]

@@ -1,9 +1,12 @@
-﻿namespace Application
+﻿using Domain.Entities;
+
+namespace Application
 {
     public static class Configuration
     {
         public static string emailSender;
         public static string userPassword;
         public static string randomWord;
+        public static User user;
     }
 }

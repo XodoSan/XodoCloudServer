@@ -41,7 +41,7 @@ namespace Application.Services.UserService
             return new UserAuthenticationResult(true, null);
         }
 
-        public async Task<UserAuthenticationResult> Register(User user)
+        public async Task<UserAuthenticationResult> CheckToRegistration(User user)
         {
             User checkUser = await _userRepository.GetUserByEmail(user.Email);
 
@@ -50,7 +50,7 @@ namespace Application.Services.UserService
                 return new UserAuthenticationResult(false, "user");
             }
 
-            _userRepository.AddUser(user);
+            Configuration.user = user;
 
             return new UserAuthenticationResult(true, null);
         }
@@ -58,10 +58,12 @@ namespace Application.Services.UserService
         public async void FinishRegistration(AuthenticateUserCommand authenticateUserCommand)
         {
             _fileService.AddUserFolder(authenticateUserCommand.Email);
+            _userRepository.AddUser(new User {Email = authenticateUserCommand.Email, PasswordHash = authenticateUserCommand.Password });
             await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
         }
 
-        public async Task<UserAuthenticationResult> ChangePassword(HttpContext httpContext, string lastPassword, string newPassword)
+        public async Task<UserAuthenticationResult> CheckToChangePassword(
+            HttpContext httpContext, string lastPassword, string newPassword)
         {
             string userEmail = httpContext.User.Identity.Name;
             User thisUser = await _userRepository.GetUserByEmail(userEmail);
@@ -71,9 +73,20 @@ namespace Application.Services.UserService
                 return new UserAuthenticationResult(false, "password");
             }
 
-            thisUser.UpdatePassword(HashService.GetHash(newPassword));
-
             return new UserAuthenticationResult(true, null);
+        }
+
+        public async Task<bool> isPasswordHasChanged(string thisUserEmail, string emailHash, string newPasswordHash)
+        {
+            User thisUser = await _userRepository.GetUserByEmail(thisUserEmail);
+
+            if (emailHash == HashService.GetHash(thisUserEmail))
+            {
+                thisUser.UpdatePassword(newPasswordHash);
+                return true;
+            }
+
+            return false;
         }
 
         private static async Task Authenticate(string email, HttpContext httpContext)

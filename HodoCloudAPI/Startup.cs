@@ -1,5 +1,6 @@
 using Application;
 using Application.Services.CacheService;
+using Application.Services.EmailSenderService;
 using Application.Services.FileService;
 using Application.Services.UserService;
 using Domain.Repositories;
@@ -35,6 +36,7 @@ namespace HodoCloudAPI
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IEmailSender, EmailSender>();
 
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
