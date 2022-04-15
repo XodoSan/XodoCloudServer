@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HodoCloudAPI", "HodoCloudAPI\HodoCloudAPI.csproj", "{3342F4DF-0FB8-4306-A1C8-FF6DBB1C3FAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HodoCloudAPI", "HodoCloudAPI\HodoCloudAPI.csproj", "{3342F4DF-0FB8-4306-A1C8-FF6DBB1C3FAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{AF8FC915-2A98-49FA-868E-F542967DCD03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{AF8FC915-2A98-49FA-868E-F542967DCD03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{D1FFAAE3-58F0-470F-B18E-238402C20DBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{D1FFAAE3-58F0-470F-B18E-238402C20DBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{4E596245-929D-4190-898E-2FDEF07E0E6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{4E596245-929D-4190-898E-2FDEF07E0E6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Tests", "Application.Tests\Application.Tests.csproj", "{DEB9F5BB-FA20-453E-81E8-88EBAC6AED03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{4E596245-929D-4190-898E-2FDEF07E0E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E596245-929D-4190-898E-2FDEF07E0E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E596245-929D-4190-898E-2FDEF07E0E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEB9F5BB-FA20-453E-81E8-88EBAC6AED03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEB9F5BB-FA20-453E-81E8-88EBAC6AED03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEB9F5BB-FA20-453E-81E8-88EBAC6AED03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEB9F5BB-FA20-453E-81E8-88EBAC6AED03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

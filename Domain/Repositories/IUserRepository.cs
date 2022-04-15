@@ -8,6 +8,6 @@ namespace Domain.Repositories
     {
         public void AddUser(User user);
         public List<User> GetAllUsers();
-        public Task<User> GetUserByEmail(string email);
+        public User GetUserByEmail(string email);
     }
 }

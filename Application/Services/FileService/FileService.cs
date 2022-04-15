@@ -12,7 +12,7 @@ namespace Application.Services.FileService
     public class FileService: IFileService
     {
         private int maxFileSize = 524288000;
-        private string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
+        private readonly string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
 
         public bool ValidateFile(IFormFile userFile)
         {

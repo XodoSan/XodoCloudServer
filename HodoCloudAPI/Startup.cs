@@ -1,5 +1,5 @@
 using Application;
-using Application.Services.CacheService;
+using Application.Services.AuthService;
 using Application.Services.EmailSenderService;
 using Application.Services.FileService;
 using Application.Services.UserService;
@@ -9,7 +9,6 @@ using Infrastructure.Loader;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,8 +34,8 @@ namespace HodoCloudAPI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IAuthService, AuthService>();
 
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
@@ -56,7 +55,7 @@ namespace HodoCloudAPI
             services.AddMemoryCache();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseRouting();
 

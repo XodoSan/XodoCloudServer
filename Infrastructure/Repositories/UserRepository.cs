@@ -1,10 +1,8 @@
 ﻿using Application.Services;
 using Domain.Entities;
 using Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -28,9 +26,9 @@ namespace Infrastructure.Repositories
             return _context.Set<User>().ToList(); 
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public User GetUserByEmail(string email)
         {
-            return await _context.Set<User>().FirstOrDefaultAsync(user => user.Email == email);
+            return _context.Set<User>().FirstOrDefault(user => user.Email == email);
         }
     }
 }

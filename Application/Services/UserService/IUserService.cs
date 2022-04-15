@@ -8,9 +8,9 @@ namespace Application.Services.UserService
     public interface IUserService
     {
         public Task<UserAuthenticationResult> Login(AuthenticateUserCommand authenticateUserCommand);
-        public Task<UserAuthenticationResult> CheckToRegistration(User user);
-        public void FinishRegistration(AuthenticateUserCommand authenticateUserCommand);
-        public Task<UserAuthenticationResult> CheckToChangePassword(HttpContext httpContext, string lastPassword, string newPassword);
-        public Task<bool> isPasswordHasChanged(string thisUserEmail, string emailHash, string newPasswordHash);
+        public UserAuthenticationResult CheckToRegistration(User user);
+        public Task FinishRegistration(AuthenticateUserCommand authenticateUserCommand);
+        public UserAuthenticationResult CheckToChangePassword(HttpContext httpContext, string lastPassword);
+        public bool IsPasswordChangedHasConfirmed(string thisUserEmail, string emailHash, string newPasswordHash);
     }
 }

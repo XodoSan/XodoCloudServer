@@ -34,13 +34,12 @@ namespace HodoCloudAPI.Controllers
         [HttpPost("registration")]
         public async Task<UserAuthenticationResultDto> CheckToRegistration([FromBody] AuthenticateUserCommandDto authenticateUserDto)
         {
-            UserAuthenticationResult result = await _userService.CheckToRegistration(new User 
+            UserAuthenticationResult result = _userService.CheckToRegistration(new User 
             {
                 Email = authenticateUserDto.Email, 
                 PasswordHash = authenticateUserDto.Password 
             });
 
-            Configuration.user = new User { Email = authenticateUserDto.Email, PasswordHash = authenticateUserDto.Password };
             string confirmLink = _emailSender.GenereteEmailConfirmLink(authenticateUserDto.Email);
             await _emailSender.SendEmailAsync(authenticateUserDto.Email, confirmLink);
 
@@ -48,7 +47,7 @@ namespace HodoCloudAPI.Controllers
         }
 
         [HttpGet("confirm_registration/{hashEmail}")]
-        public bool ConfirmRegistration([FromRoute] string hashEmail)
+        public string ConfirmRegistration([FromRoute] string hashEmail)
         {
             int substringIndex = hashEmail.IndexOf(Configuration.randomWord);
             hashEmail = hashEmail.Remove(substringIndex, Configuration.randomWord.Length);
@@ -68,10 +67,10 @@ namespace HodoCloudAPI.Controllers
                 _userService.FinishRegistration(authenticateUserCommand);
                 _unitOfWork.Commit();
 
-                return true;
+                return "Successfuly registration!";
             }
 
-            return false;
+            return "Failed registration!";
         }
 
         [HttpPost("login")]
@@ -86,11 +85,11 @@ namespace HodoCloudAPI.Controllers
         [HttpPost("change_password")]
         public async Task<UserAuthenticationResultDto> CheckingToChangePassword([FromBody] UserPasswordsDto userPasswordsDto)
         {
-            UserAuthenticationResult result = await _userService.CheckToChangePassword(
-                HttpContext, userPasswordsDto.lastPassword, userPasswordsDto.newPassword);
+            UserAuthenticationResult result = _userService.CheckToChangePassword(
+                HttpContext, userPasswordsDto.LastPassword);
 
             string userEmailHash = HashService.GetHash(HttpContext.User.Identity.Name);
-            string newPasswordHash = HashService.GetHash(userPasswordsDto.newPassword);
+            string newPasswordHash = HashService.GetHash(userPasswordsDto.NewPassword);
 
             string confirmLink = _emailSender.GeneratePasswordConfirmLink(userEmailHash, newPasswordHash);
             await _emailSender.SendEmailAsync(HttpContext.User.Identity.Name, confirmLink);
@@ -99,21 +98,21 @@ namespace HodoCloudAPI.Controllers
         }
 
         [HttpGet("confirm_change_password/{emailHash}/{newPasswordHash}")]
-        public async Task<bool> ConfirmChangePassword([FromRoute] string emailHash, [FromRoute] string newPasswordHash)
+        public string ConfirmChangePassword([FromRoute] string emailHash, [FromRoute] string newPasswordHash)
         {
             int substringIndex = newPasswordHash.IndexOf(Configuration.randomWord);
             newPasswordHash = newPasswordHash.Remove(substringIndex, Configuration.randomWord.Length);
 
             string thisUserEmail = HttpContext.User.Identity.Name;
 
-            if (await _userService.isPasswordHasChanged(thisUserEmail, emailHash, newPasswordHash))
+            if (_userService.IsPasswordChangedHasConfirmed(thisUserEmail, emailHash, newPasswordHash))
             {
                 _unitOfWork.Commit();
 
-                return true;
+                return "Password is changed!";
             }
 
-            return false;
+            return "Password has not been changed";
         }
 
         [HttpPost("logout")]

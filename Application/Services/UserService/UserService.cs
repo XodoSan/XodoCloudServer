@@ -1,12 +1,9 @@
 ﻿using Application.Entities;
+using Application.Services.AuthService;
 using Application.Services.FileService;
 using Domain.Entities;
 using Domain.Repositories;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Application.Services.UserService
@@ -15,16 +12,21 @@ namespace Application.Services.UserService
     {
         private readonly IUserRepository _userRepository;
         private readonly IFileService _fileService;
+        private readonly IAuthService _authService;
 
-        public UserService(IUserRepository userRepository, IFileService fileService)
+        public UserService(
+            IUserRepository userRepository, 
+            IFileService fileService, 
+            IAuthService authService)
         {
             _userRepository = userRepository;
             _fileService = fileService;
+            _authService = authService;
         }
 
         public async Task<UserAuthenticationResult> Login(AuthenticateUserCommand authenticateUserCommand)
         {
-            User user = await _userRepository.GetUserByEmail(authenticateUserCommand.Email);
+            User user = _userRepository.GetUserByEmail(authenticateUserCommand.Email);
 
             if (user == null)
             {
@@ -36,14 +38,14 @@ namespace Application.Services.UserService
                 return new UserAuthenticationResult(false, "password");
             }
 
-            await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
+            await _authService.Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
 
             return new UserAuthenticationResult(true, null);
         }
 
-        public async Task<UserAuthenticationResult> CheckToRegistration(User user)
+        public UserAuthenticationResult CheckToRegistration(User user)
         {
-            User checkUser = await _userRepository.GetUserByEmail(user.Email);
+            User checkUser = _userRepository.GetUserByEmail(user.Email);
 
             if (checkUser != null)
             {
@@ -55,18 +57,17 @@ namespace Application.Services.UserService
             return new UserAuthenticationResult(true, null);
         }
 
-        public async void FinishRegistration(AuthenticateUserCommand authenticateUserCommand)
+        public async Task FinishRegistration(AuthenticateUserCommand authenticateUserCommand)
         {
             _fileService.AddUserFolder(authenticateUserCommand.Email);
             _userRepository.AddUser(new User {Email = authenticateUserCommand.Email, PasswordHash = authenticateUserCommand.Password });
-            await Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
+            await _authService.Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
         }
 
-        public async Task<UserAuthenticationResult> CheckToChangePassword(
-            HttpContext httpContext, string lastPassword, string newPassword)
+        public UserAuthenticationResult CheckToChangePassword(HttpContext httpContext, string lastPassword)
         {
             string userEmail = httpContext.User.Identity.Name;
-            User thisUser = await _userRepository.GetUserByEmail(userEmail);
+            User thisUser = _userRepository.GetUserByEmail(userEmail);
 
             if (thisUser.PasswordHash != HashService.GetHash(lastPassword))
             {
@@ -76,9 +77,9 @@ namespace Application.Services.UserService
             return new UserAuthenticationResult(true, null);
         }
 
-        public async Task<bool> isPasswordHasChanged(string thisUserEmail, string emailHash, string newPasswordHash)
+        public bool IsPasswordChangedHasConfirmed(string thisUserEmail, string emailHash, string newPasswordHash)
         {
-            User thisUser = await _userRepository.GetUserByEmail(thisUserEmail);
+            User thisUser = _userRepository.GetUserByEmail(thisUserEmail);
 
             if (emailHash == HashService.GetHash(thisUserEmail))
             {
@@ -87,13 +88,6 @@ namespace Application.Services.UserService
             }
 
             return false;
-        }
-
-        private static async Task Authenticate(string email, HttpContext httpContext)
-        {
-            var claims = new List<Claim> { new Claim(ClaimsIdentity.DefaultNameClaimType, email) };
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
     }
 }
