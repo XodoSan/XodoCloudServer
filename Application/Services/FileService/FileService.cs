@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Services.FileService
@@ -37,9 +38,11 @@ namespace Application.Services.FileService
 
         public List<string> GetUserFileNames(string userEmail)
         {
-            string userFolderPath = basePath + userEmail;
+            StringBuilder userFolderPath = new();
+            userFolderPath.Append(basePath).Append(userEmail);
+
             List<string> result = new();
-            result = _fileRepository.GetFilePathsFromUserFolder(userFolderPath);
+            result = _fileRepository.GetFilePathsFromUserFolder(userFolderPath.ToString());
 
             //userFolderPath.Length + 1. Plus 1 remove '\' simbol
             return result.Select(result => result.Remove(0, userFolderPath.Length + 1)).ToList();
@@ -47,16 +50,19 @@ namespace Application.Services.FileService
 
         public void DeleteUserFiles(string userEmail, string[] userFileNames)
         {
+            StringBuilder filePath = new();
+
             for (int i = 0; i < userFileNames.Length; i++)
             {
-                string filePath = basePath + userEmail + @"\" + userFileNames[i];
-                _fileRepository.DeleteFile(filePath);
+                filePath.Append(basePath).Append(userEmail).Append("/").Append(userFileNames[i]);
+                _fileRepository.DeleteFile(filePath.ToString());
             }
         }
 
         public async Task<FileResult> DownloadUserFile(string userEmail, string userFileName)
         {
-            string userFolderPath = basePath + userEmail + @"\";
+            StringBuilder userFolderPath = new();
+            userFolderPath.Append(basePath).Append(userEmail).Append("/");
 
             string contentType;
             new FileExtensionContentTypeProvider().TryGetContentType(userFileName, out contentType);

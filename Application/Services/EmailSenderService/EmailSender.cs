@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Net.Mail;
 using System;
+using System.Text;
 
 namespace Application.Services.EmailSenderService
 {
@@ -15,7 +16,16 @@ namespace Application.Services.EmailSenderService
             MailAddress to = new MailAddress(userEmail);
             MailMessage message = new MailMessage(from, to);
             message.Subject = "HodoCloud auth";
-            message.Body = "Чтобы подтвердить свою почту, перейдите по ссылке: " + '\u0022' + confirmLink + '\u0022' + @"\";
+
+            StringBuilder messageBody = new();
+            messageBody
+                .Append("Чтобы подтвердить свою почту, перейдите по ссылке: ")
+                .Append('\u0022')
+                .Append(confirmLink)
+                .Append('\u0022')
+                .Append("/");
+
+            message.Body = messageBody.ToString();
             SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
             smtp.Credentials = new NetworkCredential(Configuration.emailSender, Configuration.userPassword);
             smtp.EnableSsl = true;
@@ -30,32 +40,44 @@ namespace Application.Services.EmailSenderService
             string randomWord = GetRandomWord();
             Configuration.randomWord = randomWord;
 
-            return baseLink + dataHash + randomWord;
+            StringBuilder confirmLink = new();
+            confirmLink
+                .Append(baseLink)
+                .Append(dataHash)
+                .Append(randomWord);
+
+            return confirmLink.ToString();
         }
 
         public string GeneratePasswordConfirmLink(string userEmailHash, string passwordHash)
         {
-            string baseLink = "https://localhost:5001/api/User/confirm_change_password/" + userEmailHash + "/" + passwordHash;
+            StringBuilder baseLink = new();
+            baseLink
+                .Append("https://localhost:5001/api/User/confirm_change_password/")
+                .Append(userEmailHash)
+                .Append("/")
+                .Append(passwordHash);
 
             string randomWord = GetRandomWord();
             Configuration.randomWord = randomWord;
+            baseLink.Append(randomWord);
 
-            return baseLink + randomWord;
+            return baseLink.ToString();
         }
 
         private static string GetRandomWord()
         {
             Random random = new();
             int numLetters = random.Next(5, 10);
-            string randWord = "";
+            StringBuilder randWord = new();
 
             for (int i = 0; i < numLetters; i++)
             {
                 int randomIndex = random.Next(0, letters.Length - 1);
-                randWord += letters[randomIndex];
+                randWord.Append(letters[randomIndex]);
             }
 
-            return randWord;
+            return randWord.ToString();
         }
     }
 }

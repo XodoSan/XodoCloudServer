@@ -14,7 +14,7 @@ namespace Application.Services.AuthService
             var claims = new List<Claim> { new Claim(ClaimsIdentity.DefaultNameClaimType, email) };
 
             ClaimsIdentity id = new ClaimsIdentity(
-                claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
             await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
     }
