@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Microsoft.AspNetCore.Http;
+﻿using Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Collections.Generic;
@@ -14,9 +13,16 @@ namespace Application.Services.FileService
         private int maxFileSize = 524288000;
         private readonly string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
 
-        public bool ValidateFile(IFormFile userFile)
+        private readonly IFileRepository _fileRepository;
+
+        public FileService(IFileRepository fileRepository)
         {
-            if (userFile.Length < maxFileSize)
+            _fileRepository = fileRepository;
+        }
+
+        public bool ValidateFile(long fileLength)
+        {
+            if (fileLength < maxFileSize)
             {
                 return true;
             }
@@ -26,14 +32,14 @@ namespace Application.Services.FileService
 
         public void AddUserFolder(string userEmail)
         {
-            Directory.CreateDirectory(basePath + userEmail);
+            _fileRepository.AddUserFolder(userEmail);
         }
 
         public List<string> GetUserFileNames(string userEmail)
         {
             string userFolderPath = basePath + userEmail;
             List<string> result = new();
-            result = Directory.GetFiles(userFolderPath).ToList();
+            result = _fileRepository.GetFilePathsFromUserFolder(userFolderPath);
 
             //userFolderPath.Length + 1. Plus 1 remove '\' simbol
             return result.Select(result => result.Remove(0, userFolderPath.Length + 1)).ToList();
@@ -43,7 +49,8 @@ namespace Application.Services.FileService
         {
             for (int i = 0; i < userFileNames.Length; i++)
             {
-                File.Delete(basePath + userEmail + @"\" + userFileNames[i]);
+                string filePath = basePath + userEmail + @"\" + userFileNames[i];
+                _fileRepository.DeleteFile(filePath);
             }
         }
 
@@ -54,7 +61,7 @@ namespace Application.Services.FileService
             string contentType;
             new FileExtensionContentTypeProvider().TryGetContentType(userFileName, out contentType);
 
-            byte[] result = await File.ReadAllBytesAsync(userFolderPath + userFileName);
+            byte[] result = await _fileRepository.ReadFile(userFolderPath + userFileName);
 
             var fileContentResult = new FileContentResult(result, contentType)
             {

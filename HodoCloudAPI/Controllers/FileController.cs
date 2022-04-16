@@ -1,10 +1,9 @@
-﻿using Infrastructure.Loader;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Application.Services.FileService;
 using Microsoft.AspNetCore.Authorization;
-using Application.Services.UserService;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.Repositories;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -13,12 +12,12 @@ namespace HodoCloudAPI.Controllers
     [ApiController]
     public class FileController: ControllerBase
     {
-        private readonly IFileLoader _fileLoader;
+        private readonly IFileRepository _fileRepository;
         private readonly IFileService _fileService;
 
-        public FileController(IFileLoader fileLoader, IFileService fileService)
+        public FileController(IFileRepository fileRepository, IFileService fileService)
         {
-            _fileLoader = fileLoader;
+            _fileRepository = fileRepository;
             _fileService = fileService;
         }
 
@@ -28,9 +27,9 @@ namespace HodoCloudAPI.Controllers
         public void PostUserFile()
         {
             var userFile = Request.Form.Files[0];
-            if (_fileService.ValidateFile(userFile))
+            if (_fileService.ValidateFile(userFile.Length))
             {
-                _fileLoader.SaveFileToUserFolder(userFile, HttpContext.User.Identity.Name);
+                _fileRepository.SaveFileToUserFolder(userFile, HttpContext.User.Identity.Name);
             }
         }
 

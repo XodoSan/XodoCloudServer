@@ -15,7 +15,7 @@ namespace Application.Tests
     public class UserServiceTest
     {
         private static readonly string defaultUserPassword = "";
-        private static readonly string defaultUserEmail = "test";
+        private static readonly string defaultUserEmail = "XodoSan";
 
         private readonly IUserRepository _userRepository = Mock.Of<IUserRepository>(method => method.
             GetUserByEmail(It.IsAny<string>()) == new User 

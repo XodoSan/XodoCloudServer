@@ -5,7 +5,6 @@ using Application.Services.FileService;
 using Application.Services.UserService;
 using Domain.Repositories;
 using Infrastructure;
-using Infrastructure.Loader;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -29,13 +28,13 @@ namespace HodoCloudAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddScoped<IFileLoader, FileLoader>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IFileRepository, FileRepository>();
 
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
