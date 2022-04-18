@@ -1,7 +1,7 @@
 using Application.Entities;
-using Application.Services;
 using Application.Services.AuthService;
 using Application.Services.FileService;
+using Application.Services.HashService;
 using Application.Services.UserService;
 using Domain.Entities;
 using Domain.Repositories;
@@ -12,15 +12,17 @@ using Xunit;
 
 namespace Application.Tests
 {
-    public class UserServiceTest
+    public class UserServiceTests
     {
-        private static readonly string defaultUserPassword = "";
-        private static readonly string defaultUserEmail = "XodoSan";
+        private const string defaultUserEmail = "XodoSan";
+        private const string defaultUserPassword = "test";
+
+        private static readonly IHashService _hashService = new HashService();
 
         private readonly IUserRepository _userRepository = Mock.Of<IUserRepository>(method => method.
             GetUserByEmail(It.IsAny<string>()) == new User 
             { 
-                Email = defaultUserEmail, PasswordHash = HashService.GetHash(defaultUserPassword) 
+                Email = defaultUserEmail, PasswordHash = _hashService.GetHash(defaultUserPassword) 
             });
 
         private readonly IAuthService _authService = Mock.Of<IAuthService>(method => method.
@@ -29,9 +31,9 @@ namespace Application.Tests
         private readonly IFileService _fileService = Mock.Of<IFileService>();
         private readonly IUserService _userService;
 
-        public UserServiceTest()
+        public UserServiceTests()
         {
-            _userService = new UserService(_userRepository, _fileService, _authService);
+            _userService = new UserService(_userRepository, _fileService, _authService, _hashService);
         }
 
         [Fact]
@@ -45,44 +47,49 @@ namespace Application.Tests
             Assert.Equal(hypothesis.Result, result.Result);
         }
 
-        [Fact]
-        public async void Login_ShouldReturnTrue()
+        [Theory]
+        [InlineData(defaultUserEmail, defaultUserPassword, true)]
+        [InlineData(defaultUserEmail, "", false)]
+        public async void Login_Test(string userEmail, string userPassword, bool hypothesis)
         {
-            UserAuthenticationResult hypothesis = new UserAuthenticationResult(true, null);
-
             DefaultHttpContext httpContext = new DefaultHttpContext();
-            AuthenticateUserCommand userCommand = new AuthenticateUserCommand(defaultUserEmail, defaultUserPassword, httpContext);
+            AuthenticateUserCommand userCommand = new AuthenticateUserCommand(userEmail, userPassword, httpContext);
 
             UserAuthenticationResult result = await _userService.Login(userCommand);
 
-            Assert.Equal(hypothesis.Result, result.Result);
+            Assert.Equal(hypothesis, result.Result);
         }
 
         [Fact]
         public async void FinishRegistration_ShouldReturnVoid()
         {
             DefaultHttpContext httpContext = new DefaultHttpContext();
+
             AuthenticateUserCommand userCommand = new AuthenticateUserCommand(defaultUserEmail, defaultUserPassword, httpContext);
 
             await _userService.FinishRegistration(userCommand);
         }
 
-        [Fact]
-        public void CheckToChangePassword_ShouldReturnTrue()
+        [Theory]
+        [InlineData(defaultUserPassword, true)]
+        [InlineData("", false)]
+        public void CheckToChangePassword_Test(string userPassword, bool hypothesis)
         {
-            UserAuthenticationResult hypothesis = new UserAuthenticationResult(true, null);
-
             DefaultHttpContext httpContext = new DefaultHttpContext();
-            UserAuthenticationResult result = _userService.CheckToChangePassword(httpContext, defaultUserPassword);
 
-            Assert.Equal(hypothesis.Result, result.Result);
+            UserAuthenticationResult result = _userService.CheckToChangePassword(httpContext, userPassword);
+
+            Assert.Equal(hypothesis, result.Result);
         }
 
-        [Fact]
-        public void IsPasswordChangedHasConfirmed_ShouldReturnTrue()
+        [Theory]
+        [InlineData(defaultUserEmail, defaultUserEmail, true)]
+        [InlineData(defaultUserEmail, "", false)]
+        public void IsPasswordChangedHasConfirmed_Test(string userEmail, string userEmailHash, bool hypothesis)
         {
-            bool hypothesis = true;
-            bool result = _userService.IsPasswordChangedHasConfirmed(defaultUserEmail, HashService.GetHash(defaultUserEmail), "");
+            userEmailHash = _hashService.GetHash(userEmailHash);
+
+            bool result = _userService.IsPasswordChangedHasConfirmed(userEmail, userEmailHash, "");
 
             Assert.Equal(hypothesis, result);
         }

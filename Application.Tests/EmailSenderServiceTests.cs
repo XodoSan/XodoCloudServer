@@ -1,11 +1,11 @@
-﻿using Application.Services;
-using Application.Services.EmailSenderService;
+﻿using Application.Services.EmailSenderService;
+using Application.Services.HashService;
 using Moq;
 using Xunit;
 
 namespace Application.Tests
 {
-    public class EmailSenderServiceTest
+    public class EmailSenderServiceTests
     {
         private static string defaultUserEmail = "HodoSan";
         private static string defaultUserPassword = "test";
@@ -15,9 +15,11 @@ namespace Application.Tests
             GenereteEmailConfirmLink(It.IsAny<string>()) == $"/{defaultUserEmail}/confirm" && method.
             GeneratePasswordConfirmLink(It.IsAny<string>(), It.IsAny<string>()) == $"/{defaultUserPassword}/confirm");
 
-        public EmailSenderServiceTest()
+        private readonly IHashService _hashService = Mock.Of<IHashService>();
+
+        public EmailSenderServiceTests()
         {
-            _emailSender = new EmailSender();
+            _emailSender = new EmailSender(_hashService);
         }
 
         [Fact]
@@ -30,8 +32,8 @@ namespace Application.Tests
         [Fact]
         public void SendConfirmPasswordAsync_ShouldReturnVoid()
         {
-            string emailHash = HashService.GetHash(defaultUserEmail);
-            string passwordHash = HashService.GetHash(defaultUserPassword);
+            string emailHash = _hashService.GetHash(defaultUserEmail);
+            string passwordHash = _hashService.GetHash(defaultUserPassword);
 
             string passwordConfirmLink = _emailSenderTools.GeneratePasswordConfirmLink(emailHash, passwordHash);
             _emailSender.SendEmailAsync(defaultUserEmail, passwordConfirmLink);

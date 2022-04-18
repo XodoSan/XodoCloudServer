@@ -1,6 +1,7 @@
 ﻿using Application.Entities;
 using Application.Services.AuthService;
 using Application.Services.FileService;
+using Application.Services.HashService;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -13,15 +14,18 @@ namespace Application.Services.UserService
         private readonly IUserRepository _userRepository;
         private readonly IFileService _fileService;
         private readonly IAuthService _authService;
+        private readonly IHashService _hashService;
 
         public UserService(
             IUserRepository userRepository, 
             IFileService fileService, 
-            IAuthService authService)
+            IAuthService authService,
+            IHashService hashService)
         {
             _userRepository = userRepository;
             _fileService = fileService;
             _authService = authService;
+            _hashService = hashService;
         }
 
         public async Task<UserAuthenticationResult> Login(AuthenticateUserCommand authenticateUserCommand)
@@ -33,7 +37,7 @@ namespace Application.Services.UserService
                 return new UserAuthenticationResult(false, "user");
             }
 
-            if (HashService.GetHash(authenticateUserCommand.Password) != user.PasswordHash)
+            if (_hashService.GetHash(authenticateUserCommand.Password) != user.PasswordHash)
             {
                 return new UserAuthenticationResult(false, "password");
             }
@@ -60,7 +64,10 @@ namespace Application.Services.UserService
         public async Task FinishRegistration(AuthenticateUserCommand authenticateUserCommand)
         {
             _fileService.AddUserFolder(authenticateUserCommand.Email);
-            _userRepository.AddUser(new User {Email = authenticateUserCommand.Email, PasswordHash = authenticateUserCommand.Password });
+
+            string passwordHash = _hashService.GetHash(authenticateUserCommand.Password);
+            _userRepository.AddUser(new User {Email = authenticateUserCommand.Email, PasswordHash = passwordHash });
+
             await _authService.Authenticate(authenticateUserCommand.Email, authenticateUserCommand.HttpContext);
         }
 
@@ -69,7 +76,7 @@ namespace Application.Services.UserService
             string userEmail = httpContext.User.Identity.Name;
             User thisUser = _userRepository.GetUserByEmail(userEmail);
 
-            if (thisUser.PasswordHash != HashService.GetHash(lastPassword))
+            if (thisUser.PasswordHash != _hashService.GetHash(lastPassword))
             {
                 return new UserAuthenticationResult(false, "password");
             }
@@ -81,7 +88,7 @@ namespace Application.Services.UserService
         {
             User thisUser = _userRepository.GetUserByEmail(thisUserEmail);
 
-            if (emailHash == HashService.GetHash(thisUserEmail))
+            if (emailHash == _hashService.GetHash(thisUserEmail))
             {
                 thisUser.UpdatePassword(newPasswordHash);
                 return true;

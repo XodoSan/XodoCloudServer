@@ -3,12 +3,20 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using System;
 using System.Text;
+using Application.Services.HashService;
 
 namespace Application.Services.EmailSenderService
 {
     public class EmailSender: IEmailSender, IEmailSenderTools
     {
         private static readonly char[] letters = "qwertyuiopasdfghjklzxcvbnm".ToCharArray();
+
+        private readonly IHashService _hashService;
+
+        public EmailSender(IHashService hashService)
+        {
+            _hashService = hashService;
+        }
 
         public async Task SendEmailAsync(string userEmail, string confirmLink)
         {
@@ -19,7 +27,7 @@ namespace Application.Services.EmailSenderService
 
             StringBuilder messageBody = new();
             messageBody
-                .Append("Чтобы подтвердить свою почту, перейдите по ссылке: ")
+                .Append("Чтобы подтвердить свою личность, перейдите по ссылке: ")
                 .Append('\u0022')
                 .Append(confirmLink)
                 .Append('\u0022')
@@ -35,7 +43,7 @@ namespace Application.Services.EmailSenderService
         public string GenereteEmailConfirmLink(string userEmail)
         {
             string baseLink = "https://localhost:5001/api/User/confirm_registration/";
-            string dataHash = HashService.GetHash(userEmail);
+            string dataHash = _hashService.GetHash(userEmail);
 
             string randomWord = GetRandomWord();
             Configuration.randomWord = randomWord;

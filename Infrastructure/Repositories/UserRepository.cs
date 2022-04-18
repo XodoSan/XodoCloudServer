@@ -17,7 +17,6 @@ namespace Infrastructure.Repositories
 
         public void AddUser(User user)
         {
-            user.PasswordHash = HashService.GetHash(user.PasswordHash);
             _context.Set<User>().Add(user);
         }
 

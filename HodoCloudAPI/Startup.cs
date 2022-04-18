@@ -2,6 +2,7 @@ using Application;
 using Application.Services.AuthService;
 using Application.Services.EmailSenderService;
 using Application.Services.FileService;
+using Application.Services.HashService;
 using Application.Services.UserService;
 using Domain.Repositories;
 using Infrastructure;
@@ -34,9 +35,10 @@ namespace HodoCloudAPI
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFileRepository, FileRepository>();
-            services.AddSingleton<EmailSender>();
-            services.AddSingleton<IEmailSender>(item => item.GetRequiredService<EmailSender>());
-            services.AddSingleton<IEmailSenderTools>(item => item.GetRequiredService<EmailSender>());
+            services.AddScoped<IHashService, HashService>();
+            services.AddTransient<EmailSender>();
+            services.AddTransient<IEmailSender>(item => item.GetRequiredService<EmailSender>());
+            services.AddTransient<IEmailSenderTools>(item => item.GetRequiredService<EmailSender>());
 
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");

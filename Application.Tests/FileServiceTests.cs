@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Application.Tests
 {
-    public class FileServiceTest
+    public class FileServiceTests
     {
         private const string defaultUserEmail = "XodoSan";
         private static string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
@@ -23,7 +23,7 @@ namespace Application.Tests
 
         private readonly IFileService _fileService;
 
-        public FileServiceTest()
+        public FileServiceTests()
         {
             _fileService = new FileService(_fileRepository);
         }

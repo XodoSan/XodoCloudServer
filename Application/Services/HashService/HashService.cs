@@ -1,11 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Application.Services
+namespace Application.Services.HashService
 {
-    public static class HashService
+    public class HashService: IHashService
     {
-        public static string GetHash(string data)
+        public string GetHash(string data)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {

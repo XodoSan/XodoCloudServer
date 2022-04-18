@@ -2,6 +2,7 @@
 using Application.Entities;
 using Application.Services;
 using Application.Services.EmailSenderService;
+using Application.Services.HashService;
 using Application.Services.UserService;
 using Domain.Entities;
 using HodoCloudAPI.Dtos;
@@ -20,18 +21,21 @@ namespace HodoCloudAPI.Controllers
         private readonly IEmailSender _emailSender;
         private readonly IEmailSenderTools _emailSenderTools;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHashService _hashService;
 
         public UserController
         (
             IUserService userService,
             IEmailSender emailSender,
             IEmailSenderTools emailSenderTools,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IHashService hashService)
         {
             _userService = userService;
             _emailSender = emailSender;
             _emailSenderTools = emailSenderTools;
             _unitOfWork = unitOfWork;
+            _hashService = hashService;
         }
 
         [HttpPost("registration")]
@@ -56,7 +60,7 @@ namespace HodoCloudAPI.Controllers
             hashEmail = hashEmail.Remove(substringIndex, Configuration.randomWord.Length);
 
             string thisUserEmail = Configuration.user.Email; 
-            if (HashService.GetHash(thisUserEmail) == hashEmail)
+            if (_hashService.GetHash(thisUserEmail) == hashEmail)
             {
                 User user = Configuration.user;
 
@@ -91,8 +95,8 @@ namespace HodoCloudAPI.Controllers
             UserAuthenticationResult result = _userService.CheckToChangePassword(
                 HttpContext, userPasswordsDto.LastPassword);
 
-            string userEmailHash = HashService.GetHash(HttpContext.User.Identity.Name);
-            string newPasswordHash = HashService.GetHash(userPasswordsDto.NewPassword);
+            string userEmailHash = _hashService.GetHash(HttpContext.User.Identity.Name);
+            string newPasswordHash = _hashService.GetHash(userPasswordsDto.NewPassword);
 
             string confirmLink = _emailSenderTools.GeneratePasswordConfirmLink(userEmailHash, newPasswordHash);
             await _emailSender.SendEmailAsync(HttpContext.User.Identity.Name, confirmLink);
