@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Application.Services.EmailSenderService
 {
-    public class EmailSender: IEmailSender
+    public class EmailSender: IEmailSender, IEmailSenderTools
     {
         private static readonly char[] letters = "qwertyuiopasdfghjklzxcvbnm".ToCharArray();
 
@@ -51,8 +51,8 @@ namespace Application.Services.EmailSenderService
 
         public string GeneratePasswordConfirmLink(string userEmailHash, string passwordHash)
         {
-            StringBuilder baseLink = new();
-            baseLink
+            StringBuilder confirmLink = new();
+            confirmLink
                 .Append("https://localhost:5001/api/User/confirm_change_password/")
                 .Append(userEmailHash)
                 .Append("/")
@@ -60,12 +60,12 @@ namespace Application.Services.EmailSenderService
 
             string randomWord = GetRandomWord();
             Configuration.randomWord = randomWord;
-            baseLink.Append(randomWord);
+            confirmLink.Append(randomWord);
 
-            return baseLink.ToString();
+            return confirmLink.ToString();
         }
 
-        private static string GetRandomWord()
+        public string GetRandomWord()
         {
             Random random = new();
             int numLetters = random.Next(5, 10);

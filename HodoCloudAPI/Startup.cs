@@ -32,9 +32,11 @@ namespace HodoCloudAPI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFileRepository, FileRepository>();
+            services.AddSingleton<EmailSender>();
+            services.AddSingleton<IEmailSender>(item => item.GetRequiredService<EmailSender>());
+            services.AddSingleton<IEmailSenderTools>(item => item.GetRequiredService<EmailSender>());
 
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");

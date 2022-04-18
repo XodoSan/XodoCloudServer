@@ -18,16 +18,19 @@ namespace HodoCloudAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly IEmailSender _emailSender;
+        private readonly IEmailSenderTools _emailSenderTools;
         private readonly IUnitOfWork _unitOfWork;
 
         public UserController
         (
             IUserService userService,
             IEmailSender emailSender,
+            IEmailSenderTools emailSenderTools,
             IUnitOfWork unitOfWork)
         {
             _userService = userService;
             _emailSender = emailSender;
+            _emailSenderTools = emailSenderTools;
             _unitOfWork = unitOfWork;
         }
 
@@ -40,7 +43,7 @@ namespace HodoCloudAPI.Controllers
                 PasswordHash = authenticateUserDto.Password 
             });
 
-            string confirmLink = _emailSender.GenereteEmailConfirmLink(authenticateUserDto.Email);
+            string confirmLink = _emailSenderTools.GenereteEmailConfirmLink(authenticateUserDto.Email);
             await _emailSender.SendEmailAsync(authenticateUserDto.Email, confirmLink);
 
             return new UserAuthenticationResultDto(result.Result, result.Error);
@@ -91,7 +94,7 @@ namespace HodoCloudAPI.Controllers
             string userEmailHash = HashService.GetHash(HttpContext.User.Identity.Name);
             string newPasswordHash = HashService.GetHash(userPasswordsDto.NewPassword);
 
-            string confirmLink = _emailSender.GeneratePasswordConfirmLink(userEmailHash, newPasswordHash);
+            string confirmLink = _emailSenderTools.GeneratePasswordConfirmLink(userEmailHash, newPasswordHash);
             await _emailSender.SendEmailAsync(HttpContext.User.Identity.Name, confirmLink);
 
             return new UserAuthenticationResultDto(result.Result, result.Error);
