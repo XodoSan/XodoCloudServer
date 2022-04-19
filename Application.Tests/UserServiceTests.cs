@@ -61,13 +61,14 @@ namespace Application.Tests
         }
 
         [Fact]
-        public async void FinishRegistration_ShouldReturnVoid()
+        public async void FinishRegistration_Test()
         {
             DefaultHttpContext httpContext = new DefaultHttpContext();
 
             AuthenticateUserCommand userCommand = new AuthenticateUserCommand(defaultUserEmail, defaultUserPassword, httpContext);
-
             await _userService.FinishRegistration(userCommand);
+
+            Assert.Equal(defaultUserEmail, UserService.stubData);
         }
 
         [Theory]

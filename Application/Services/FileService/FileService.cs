@@ -11,6 +11,7 @@ namespace Application.Services.FileService
 {
     public class FileService: IFileService
     {
+        public static string stubEmail; //this variable created for tests
         private int maxFileSize = 524288000;
         private readonly string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
 
@@ -33,6 +34,7 @@ namespace Application.Services.FileService
 
         public void AddUserFolder(string userEmail)
         {
+            stubEmail = userEmail;
             _fileRepository.AddUserFolder(userEmail);
         }
 
@@ -50,6 +52,7 @@ namespace Application.Services.FileService
 
         public void DeleteUserFiles(string userEmail, string[] userFileNames)
         {
+            stubEmail = userEmail;
             StringBuilder filePath = new();
 
             for (int i = 0; i < userFileNames.Length; i++)

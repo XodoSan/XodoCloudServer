@@ -28,21 +28,22 @@ namespace Application.Tests
             _fileService = new FileService(_fileRepository);
         }
 
-        [Fact]
-        public void ValidateFile_ShouldReturnTrue()
+        [Theory]
+        [InlineData(256, true)]
+        [InlineData(1000000000, false)]
+        public void ValidateFile_Test(long fileLength, bool hypothesis)
         {
-            bool hypothesis = true;
-
-            long fileLength = 256;
             bool result = _fileService.ValidateFile(fileLength);
 
             Assert.Equal(hypothesis, result);
         }
 
         [Fact]
-        public void AddUserFolder_ShouldReturnVoid()
+        public void AddUserFolder_Test()
         {
             _fileService.AddUserFolder(defaultUserEmail);
+
+            Assert.Equal(defaultUserEmail, FileService.stubEmail);
         }
 
         [Fact]
@@ -56,10 +57,13 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void DeleteUserFiles_ShouldReturnVoid()
+        public void DeleteUserFiles_Test()
         {
             string[] userFiles = { "file.txt" };
+
             _fileService.DeleteUserFiles(defaultUserEmail, userFiles);
+
+            Assert.Equal(defaultUserEmail, FileService.stubEmail);
         }
 
         [Fact]

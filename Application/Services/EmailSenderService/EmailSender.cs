@@ -9,6 +9,7 @@ namespace Application.Services.EmailSenderService
 {
     public class EmailSender: IEmailSender, IEmailSenderTools
     {
+        public static string stubData; //this stub variable created for tests
         private static readonly char[] letters = "qwertyuiopasdfghjklzxcvbnm".ToCharArray();
 
         private readonly IHashService _hashService;
@@ -20,6 +21,8 @@ namespace Application.Services.EmailSenderService
 
         public async Task SendEmailAsync(string userEmail, string confirmLink)
         {
+            stubData = userEmail;
+
             MailAddress from = new MailAddress(Configuration.emailSender, "HodoCloud");
             MailAddress to = new MailAddress(userEmail);
             MailMessage message = new MailMessage(from, to);

@@ -23,20 +23,25 @@ namespace Application.Tests
         }
 
         [Fact]
-        public void SendConfirmEmailAsync_ShouldReturnVoid()
+        public void SendConfirmEmailAsync_Test()
         {
             string emailConfirmLink = _emailSenderTools.GenereteEmailConfirmLink(defaultUserEmail);
+
             _emailSender.SendEmailAsync(defaultUserEmail, emailConfirmLink);
+
+            Assert.Equal(defaultUserEmail, EmailSender.stubData);
         }
 
         [Fact]
-        public void SendConfirmPasswordAsync_ShouldReturnVoid()
+        public void SendConfirmPasswordAsync_Test()
         {
             string emailHash = _hashService.GetHash(defaultUserEmail);
             string passwordHash = _hashService.GetHash(defaultUserPassword);
 
             string passwordConfirmLink = _emailSenderTools.GeneratePasswordConfirmLink(emailHash, passwordHash);
             _emailSender.SendEmailAsync(defaultUserEmail, passwordConfirmLink);
+
+            Assert.Equal(defaultUserEmail, EmailSender.stubData);
         }
     }
 }

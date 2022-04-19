@@ -11,6 +11,8 @@ namespace Application.Services.UserService
 {
     public class UserService: IUserService
     {
+        public static string stubData;
+
         private readonly IUserRepository _userRepository;
         private readonly IFileService _fileService;
         private readonly IAuthService _authService;
@@ -63,6 +65,7 @@ namespace Application.Services.UserService
 
         public async Task FinishRegistration(AuthenticateUserCommand authenticateUserCommand)
         {
+            stubData = authenticateUserCommand.Email;
             _fileService.AddUserFolder(authenticateUserCommand.Email);
 
             string passwordHash = _hashService.GetHash(authenticateUserCommand.Password);
