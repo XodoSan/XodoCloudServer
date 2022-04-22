@@ -1,4 +1,5 @@
 ﻿using Domain.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Collections.Generic;
@@ -12,8 +13,9 @@ namespace Application.Services.FileService
     public class FileService: IFileService
     {
         public static string stubEmail; //this variable created for tests
+        public static string stubFileName; //this variable created for tests
         private int maxFileSize = 524288000;
-        private readonly string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
+        public static string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
 
         private readonly IFileRepository _fileRepository;
 
@@ -30,6 +32,15 @@ namespace Application.Services.FileService
             }
 
             return false;
+        }
+
+        public void PostUserFile(IFormFile userFile, HttpContext httpContext)
+        {
+            if (ValidateFile(userFile.Length))
+            {
+                stubFileName = userFile.FileName;
+                _fileRepository.SaveFileToUserFolder(userFile, httpContext.User.Identity.Name);
+            }
         }
 
         public void AddUserFolder(string userEmail)

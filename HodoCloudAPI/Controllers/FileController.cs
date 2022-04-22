@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Repositories;
+using System;
 
 namespace HodoCloudAPI.Controllers
 {
@@ -12,12 +13,10 @@ namespace HodoCloudAPI.Controllers
     [ApiController]
     public class FileController: ControllerBase
     {
-        private readonly IFileRepository _fileRepository;
         private readonly IFileService _fileService;
 
-        public FileController(IFileRepository fileRepository, IFileService fileService)
+        public FileController(IFileService fileService)
         {
-            _fileRepository = fileRepository;
             _fileService = fileService;
         }
 
@@ -27,10 +26,7 @@ namespace HodoCloudAPI.Controllers
         public void PostUserFile()
         {
             var userFile = Request.Form.Files[0];
-            if (_fileService.ValidateFile(userFile.Length))
-            {
-                _fileRepository.SaveFileToUserFolder(userFile, HttpContext.User.Identity.Name);
-            }
+            _fileService.PostUserFile(userFile, HttpContext);
         }
 
         [HttpPost("delete")]

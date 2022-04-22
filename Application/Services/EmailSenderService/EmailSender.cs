@@ -71,6 +71,7 @@ namespace Application.Services.EmailSenderService
 
             string randomWord = GetRandomWord();
             Configuration.randomWord = randomWord;
+            Configuration.userPasswordHash = passwordHash;
             confirmLink.Append(randomWord);
 
             return confirmLink.ToString();

@@ -9,7 +9,7 @@ namespace Infrastructure.Repositories
 {
     public class FileRepository: IFileRepository
     {
-        private static string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
+        public static string basePath = Directory.GetCurrentDirectory() + @"\" + "Users" + @"\";
 
         public void SaveFileToUserFolder(IFormFile userFile, string authenticateUserEmail)
         {

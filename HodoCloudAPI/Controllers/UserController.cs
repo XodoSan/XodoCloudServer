@@ -1,6 +1,5 @@
 ﻿using Application;
 using Application.Entities;
-using Application.Services;
 using Application.Services.EmailSenderService;
 using Application.Services.HashService;
 using Application.Services.UserService;
@@ -95,11 +94,14 @@ namespace HodoCloudAPI.Controllers
             UserAuthenticationResult result = _userService.CheckToChangePassword(
                 HttpContext, userPasswordsDto.LastPassword);
 
-            string userEmailHash = _hashService.GetHash(HttpContext.User.Identity.Name);
-            string newPasswordHash = _hashService.GetHash(userPasswordsDto.NewPassword);
+            if (result.Result)
+            {
+                string userEmailHash = _hashService.GetHash(HttpContext.User.Identity.Name);
+                string newPasswordHash = _hashService.GetHash(userPasswordsDto.NewPassword);
 
-            string confirmLink = _emailSenderTools.GeneratePasswordConfirmLink(userEmailHash, newPasswordHash);
-            await _emailSender.SendEmailAsync(HttpContext.User.Identity.Name, confirmLink);
+                string confirmLink = _emailSenderTools.GeneratePasswordConfirmLink(userEmailHash, newPasswordHash);
+                await _emailSender.SendEmailAsync(HttpContext.User.Identity.Name, confirmLink);
+            }
 
             return new UserAuthenticationResultDto(result.Result, result.Error);
         }
@@ -110,9 +112,10 @@ namespace HodoCloudAPI.Controllers
             int substringIndex = newPasswordHash.IndexOf(Configuration.randomWord);
             newPasswordHash = newPasswordHash.Remove(substringIndex, Configuration.randomWord.Length);
 
-            string thisUserEmail = HttpContext.User.Identity.Name;
+            string thisUserEmail = Configuration.user.Email;
 
-            if (_userService.IsPasswordChangedHasConfirmed(thisUserEmail, emailHash, newPasswordHash))
+            if (_userService.IsPasswordChangedHasConfirmed(thisUserEmail, emailHash, newPasswordHash) &&
+                newPasswordHash == Configuration.userPasswordHash)
             {
                 _unitOfWork.Commit();
 

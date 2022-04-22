@@ -1,5 +1,7 @@
 ﻿using Application.Services.FileService;
 using Domain.Repositories;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Collections.Generic;
@@ -36,6 +38,25 @@ namespace Application.Tests
             bool result = _fileService.ValidateFile(fileLength);
 
             Assert.Equal(hypothesis, result);
+        }
+
+        [Fact]
+        public void PostUserFile_Test()
+        {
+            Directory.SetCurrentDirectory(@"C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\Users\test");
+            using (var stream = File.OpenRead("file.txt"))
+            {
+                var file = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "text/plain"
+                };
+                HttpContext httpContext = new DefaultHttpContext();
+
+                _fileService.PostUserFile(file, httpContext);
+
+                Assert.Equal(FileService.stubFileName, file.FileName);
+            }
         }
 
         [Fact]

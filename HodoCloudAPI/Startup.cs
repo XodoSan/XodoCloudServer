@@ -51,11 +51,9 @@ namespace HodoCloudAPI
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
                 });
-
-            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app)
