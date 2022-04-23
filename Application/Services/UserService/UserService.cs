@@ -76,7 +76,7 @@ namespace Application.Services.UserService
 
         public UserAuthenticationResult CheckToChangePassword(HttpContext httpContext, string lastPassword)
         {
-            string userEmail = httpContext.User.Identity.Name;
+            string userEmail = Configuration.user.Email;
             User thisUser = _userRepository.GetUserByEmail(userEmail);
 
             if (thisUser.PasswordHash != _hashService.GetHash(lastPassword))

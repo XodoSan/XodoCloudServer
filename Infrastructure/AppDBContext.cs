@@ -1,4 +1,5 @@
-﻿using Infrastructure.Configurations;
+﻿using Domain.Entities;
+using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
@@ -8,6 +9,8 @@ namespace Infrastructure
         public AppDBContext(DbContextOptions<AppDBContext> options)
             : base(options)
         { }
+
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
