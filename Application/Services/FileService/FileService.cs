@@ -76,7 +76,7 @@ namespace Application.Services.FileService
         public async Task<FileResult> DownloadUserFile(string userEmail, string userFileName)
         {
             StringBuilder userFolderPath = new();
-            userFolderPath.Append(basePath).Append(userEmail).Append("/");
+            userFolderPath.Append(basePath).Append(userEmail).Append(@"\");
 
             string contentType;
             new FileExtensionContentTypeProvider().TryGetContentType(userFileName, out contentType);
