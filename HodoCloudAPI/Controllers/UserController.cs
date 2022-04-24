@@ -73,7 +73,7 @@ namespace HodoCloudAPI.Controllers
                 _userService.FinishRegistration(authenticateUserCommand);
                 _unitOfWork.Commit();
 
-                return "Successfuly registration!";
+                return "Successfuly registration";
             }
 
             return "Failed registration!";
@@ -119,7 +119,7 @@ namespace HodoCloudAPI.Controllers
             {
                 _unitOfWork.Commit();
 
-                return "Password is changed!";
+                return "Password is changed";
             }
 
             return "Password has not been changed";
