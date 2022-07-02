@@ -68,3 +68,7 @@ C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Syste
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.DotNet.PlatformAbstractions.dll
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
 C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\obj\Debug\net5.0\HodoCloudAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\nlog.config
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\NLog.dll
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\NLog.Extensions.Logging.dll
+C:\Users\Андрей\source\repos\HodoCloud\HodoCloudAPI\bin\Debug\net5.0\NLog.Web.AspNetCore.dll

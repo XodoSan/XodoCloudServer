@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+elfEoyzEOio5Tsc0fGp30nX7kXo5cO7UnsSxtidfrS5SEb59sxvQ9xHWCd+8D+ecLjaEFQK/81l4OG6s92Wmw==",
+  "dgSpecHash": "VNeqzjTMzxibo8NX8+wU4kM+4hPAcRA5gmcSO7T/l6Da0ZMLWHXkyzXTDfowSUsYzSJG914sAECRkB91T3xE5g==",
   "success": true,
   "projectFilePath": "C:\\Users\\Андрей\\source\\repos\\HodoCloud\\Infrastructure\\Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -64,6 +64,9 @@
     "C:\\Users\\Андрей\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\Андрей\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
     "C:\\Users\\Андрей\\.nuget\\packages\\newtonsoft.json\\10.0.1\\newtonsoft.json.10.0.1.nupkg.sha512",
+    "C:\\Users\\Андрей\\.nuget\\packages\\nlog\\5.0.0\\nlog.5.0.0.nupkg.sha512",
+    "C:\\Users\\Андрей\\.nuget\\packages\\nlog.extensions.logging\\5.0.0\\nlog.extensions.logging.5.0.0.nupkg.sha512",
+    "C:\\Users\\Андрей\\.nuget\\packages\\nlog.web.aspnetcore\\5.0.0\\nlog.web.aspnetcore.5.0.0.nupkg.sha512",
     "C:\\Users\\Андрей\\.nuget\\packages\\runtime.native.system\\4.3.0\\runtime.native.system.4.3.0.nupkg.sha512",
     "C:\\Users\\Андрей\\.nuget\\packages\\system.appcontext\\4.1.0\\system.appcontext.4.1.0.nupkg.sha512",
     "C:\\Users\\Андрей\\.nuget\\packages\\system.buffers\\4.5.0\\system.buffers.4.5.0.nupkg.sha512",

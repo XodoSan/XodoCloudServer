@@ -8,6 +8,7 @@ using HodoCloudAPI.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace HodoCloudAPI.Controllers
@@ -21,6 +22,7 @@ namespace HodoCloudAPI.Controllers
         private readonly IEmailSenderTools _emailSenderTools;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHashService _hashService;
+        private readonly ILogger<UserController> _logger; 
 
         public UserController
         (
@@ -28,13 +30,15 @@ namespace HodoCloudAPI.Controllers
             IEmailSender emailSender,
             IEmailSenderTools emailSenderTools,
             IUnitOfWork unitOfWork,
-            IHashService hashService)
+            IHashService hashService,
+            ILogger<UserController> logger)
         {
             _userService = userService;
             _emailSender = emailSender;
             _emailSenderTools = emailSenderTools;
             _unitOfWork = unitOfWork;
             _hashService = hashService;
+            _logger = logger;
         }
 
         [HttpPost("registration")]
@@ -48,6 +52,8 @@ namespace HodoCloudAPI.Controllers
 
             string confirmLink = _emailSenderTools.GenereteEmailConfirmLink(authenticateUserDto.Email);
             await _emailSender.SendEmailAsync(authenticateUserDto.Email, confirmLink);
+
+            _logger.LogInformation($"User registration: {authenticateUserDto.Email}, Status: {result.Result}, Error: {result.Error}");
 
             return new UserAuthenticationResultDto(result.Result, result.Error);
         }
@@ -85,6 +91,8 @@ namespace HodoCloudAPI.Controllers
             AuthenticateUserCommand authenticateUserCommand = ConvertToAuthenticateUserCommand(authenticateUserDto);
             UserAuthenticationResult result = await _userService.Login(authenticateUserCommand);
 
+            _logger.LogInformation($"Login user: {authenticateUserDto.Email}, Status: {result.Result}, Error: {result.Error}");
+            
             return new UserAuthenticationResultDto(result.Result, result.Error);
         }
 

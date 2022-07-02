@@ -39,7 +39,7 @@ namespace HodoCloudAPI
             services.AddTransient<EmailSender>();
             services.AddTransient<IEmailSender>(item => item.GetRequiredService<EmailSender>());
             services.AddTransient<IEmailSenderTools>(item => item.GetRequiredService<EmailSender>());
-
+            
             IConfiguration config = GetConfig();
             string connectionString = config.GetConnectionString("XodoCloudDB");
             Configuration.emailSender = config.GetConnectionString("EmailSender");
